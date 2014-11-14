@@ -29,6 +29,10 @@ class Camera(models.Model):
 #    lat = models.DecimalField(max_digits=3,decimal_places=6)
     enabled = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.name
+
+
 #class Event(models.Model):
 #    image_id = models.ForeignKey('Image')
 #    datetime = models.DateTimeField('event date and time')
@@ -37,6 +41,10 @@ class Camera(models.Model):
 #    archive_delete = # when to delete this event (and the associated images)
 #    archive_until = models.DateTimeField('event date and time')
 #    thumbnail = 
+
+#    def __str__(self):
+#        return self.name
+
 
 class Image(models.Model):
     path = models.CharField(max_length=255)
@@ -54,12 +62,20 @@ class Image(models.Model):
     # by default, we will use the middle frame in the sequence of images in 
     thumbnail = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.path
+
+
 # define tags
 class Tag(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.SlugField()
     description = models.CharField(max_length=200)
-    # I guess we can do this, so that delete of a tag can be reverted
-    is_deleted = models.BooleanField(default=False)
+    # so that we can hide a tag
+    is_hidden = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
     
 # supports tag-to-image relationships
 class ImageTag(models.Model):
@@ -69,6 +85,7 @@ class ImageTag(models.Model):
     # not sure if this is required
     #image_is_deleted = models.ForeignKey('Image',to_field='is_deleted')
     #tag_is_deleted = models.ForeignKey('Tag',to_field='is_deleted')
+
 
 # Notify certain users depending on camera/events
 #class Subscriptions(model.Models):
