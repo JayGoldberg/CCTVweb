@@ -8,7 +8,7 @@ import datetime
 
 print("Started")
 
-f = open('../sanitized.csv')
+f = open('../../data/sanitized.csv')
 reader = csv.reader(f)
 
 for row in reader:
