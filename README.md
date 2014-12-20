@@ -6,14 +6,14 @@ Events are grouped together and individual events are loadable and can be replay
 
 Architecture
 ============
-CCTVweb currently depends on the JPEG comment (COM) fields written by IQinvision IQeye series network cameras. Using a perl script, this data is read from thos JPEGS, and is inserted into an RDBMS. A web frontend interfaces with a Python backend to offer a browser-based event viewer and an interface to run queries and set warnings and limits on cameras. Cameras are responsible for FTP'ing images, but no further intelligence is needed from them.
+CCTVweb currently depends on the JPEG comment (COM) fields written by IQinvision IQeye series network cameras. Using a perl script, this data is read from those JPEGS, and is inserted into an RDBMS. A web frontend interfaces with a Python backend to offer a browser-based event viewer and an interface to run queries and set warnings and limits on cameras. Cameras are responsible for FTP'ing images, but no further intelligence is needed from them.
 
 Requirements
 ============
 * Linux server
 * perl
   * exiftool
-* python2.7
+* python3
   * virtualenv
   * uwsgi
   * django
