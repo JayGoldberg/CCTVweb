@@ -16,8 +16,8 @@ for row in reader:
     
     # datetime expects a decimal, not an extended UNIX time string, thus /1000.0
     # trigger_type below is not ideal as it will store an array == bad db normalization
-    imageFrame = Image(path = row[0], raw_json = row[1], timestamp = datetime.datetime.fromtimestamp(decoded['IQimage']['time']/1000.0), imgjdbg = decoded['IQimage']['imgjdbg'], sequence_number = decoded['IQimage']['sequence'], trigger_type = decoded['IQimage']['event'])
-
+    imageFrame = Image(path = row[0], raw_json = row[1], timestamp = datetime.datetime.utcfromtimestamp(decoded['IQimage']['time']/1000.0), imgjdbg = decoded['IQimage']['imgjdbg'], sequence_number = decoded['IQimage']['sequence'], trigger_type = decoded['IQimage']['event'])
+    
     imageFrame.save()
 
 f.close()
