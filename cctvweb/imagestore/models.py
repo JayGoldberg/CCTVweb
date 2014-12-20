@@ -56,7 +56,8 @@ class Image(models.Model):
     timestamp = models.DateTimeField()
     trigger_type = models.CommaSeparatedIntegerField(max_length=9) # trigger that was active at time
     sequence_number = models.PositiveSmallIntegerField()
-    event_id = models.IntegerField()
+    imgjdbg = models.CharField(max_length=255,default=None)
+    event_id = models.IntegerField(default=None)
     is_archived = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
     # by default, we will use the middle frame in the sequence of images in 
