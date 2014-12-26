@@ -27,12 +27,13 @@ class Camera(models.Model):
 #    timezone = 
 #    long = models.DecimalField(max_digits=3,decimal_places=6)
 #    lat = models.DecimalField(max_digits=3,decimal_places=6)
-    enabled = models.BooleanField(default=False)
+    enabled = models.BooleanField(default=False) # is the camera enabled and visible in the interface?
 
     def __str__(self):
         return self.name
 
-
+# initially considered tying images into groups of events using a foreign key to this table
+# but was told that joins like that are expensive
 #class Event(models.Model):
 #    image_id = models.ForeignKey('Image')
 #    datetime = models.DateTimeField('event date and time')
@@ -49,17 +50,19 @@ class Camera(models.Model):
 class Image(models.Model):
     path = models.CharField(max_length=255)
     raw_json = models.CharField(max_length=255)
-    # Wanted to use MAC, but I feel like it should be pointing to primary key
+    # Wanted to use MAC, but I feel like it should be pointing to primary key of camera table
     # because you could take a camera and move it, and want to restart it in a different
     # location while keeping the old image and event data
-    mac = models.ForeignKey('Camera')
+    #mac = models.ForeignKey('Camera')
     timestamp = models.DateTimeField()
-    trigger_type = models.CommaSeparatedIntegerField(max_length=9) # trigger that was active at time
+    # known trigger types are "none", "motion", "timer", "input".
+    trigger_type = models.CharField(max_length=16)
+    motion_windows = models.CharField(max_length=32)
     sequence_number = models.PositiveSmallIntegerField()
-    imgjdbg = models.CharField(max_length=255,default=None)
-    event_id = models.IntegerField(default=None)
-    is_archived = models.BooleanField(default=False)
-    is_deleted = models.BooleanField(default=False)
+    imgjdbg = models.CharField(max_length=255)
+    #event_id = models.IntegerField(default=None)
+    is_archived = models.BooleanField(default=False) # hide from UI, but make browseable
+    is_deleted = models.BooleanField(default=False) # hide this from the UI, for all intents and purposes "deleted"
     # by default, we will use the middle frame in the sequence of images in 
     thumbnail = models.CharField(max_length=255)
 
