@@ -9,3 +9,13 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^player/', include('imagestore.urls')),
 )
+
+'''
+player/event/
+player/event/<event_id>/details
+report/daily/2014-05-34/all
+report/all/daily/2014-05-34
+report/daily/2014-05-34/<cam_id>
+
+
+'''
