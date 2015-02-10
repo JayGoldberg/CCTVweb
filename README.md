@@ -16,17 +16,8 @@ Requirements
 * python3
   * virtualenv
   * flask
-  * Flask-PyMongo==0.3.0
-  * Flask-RESTful==0.3.1
-  * Jinja2==2.7.3
-  * MarkupSafe==0.23
-  * Werkzeug==0.10.1
-  * aniso8601==0.92
-  * itsdangerous==0.24
-  * mongokit==0.9.1.1
-  * pymongo==2.8
-  * pytz==2014.10
-  * six==1.9.0
+  * Flask-PyMongo
+  * Flask-RESTful
 * mongodb
 * nginx
 
@@ -68,27 +59,3 @@ $IMGDBG | Image debug data
 $O(oidNumber) | Display an OID, like IP address (3.6.10) or the image focus value(1.2.25) or last trigger event time (1.3.20). Use http://<yourcameraip>/oidtable.html to see all available OIDs.
 
 For time-based variables, you can use $SD in combination with the common strftime() UNIX time variables.
-
-License
-=======
-The MIT License (MIT), see http://opensource.org/licenses/MIT
-
-Copyright (c) 2014 Jay Goldberg & contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
