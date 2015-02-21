@@ -51,8 +51,10 @@ class Events(Resource):
     pattern = '%Y-%m-%d'
     epoch_start = int(time.mktime(time.strptime(start_date, pattern)))*1000
     epoch_end = int(time.mktime(time.strptime(end_date, pattern)))*1000
-    regex = re.compile('.*trig\+00.jpg')
     # exclude _id or the JSON serializer freaks out
+    
+    # filter only +00 events
+    #regex = re.compile('.*trig\+00.jpg')
     #result = collection.find({ '$and': [ { "IQimage.time" : { '$gt': int(epoch_start), '$lt': int(epoch_end) } }, {'path': {'$regex': regex} } ] }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
     result = collection.find({ "IQimage.time" : { '$gt': int(epoch_start), '$lt': int(epoch_end) } }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
     return {'request data': request.args, 'est_size': '%sMB' % round(((result.count() * 300)/1024),2), 'start_date': epoch_start, 'end_date': epoch_end, 'results': list(result), 'resultcount': result.count()}, 200
