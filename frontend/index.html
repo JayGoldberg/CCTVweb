@@ -2,15 +2,17 @@
 <html ng-app="myApp">
 <head>
   <title>Camera Player</title>
-  <script src="assets/angular.min.js"></script>
+  <script src="assets/angular.js"></script>
+  <script src="assets/angular-route.js"></script>
   <script src="app/app.js"></script>
 </head>
-<body>
-    <table border=1 ng-controller="ImageCtrl">
-      <tr><th>Path</th><th>Detected Motion Windows</th><th>Timestamp</th></tr>
-      <tr ng-repeat="image in images">
-        <td><img width=600 ng-src="{{image.path.replace('/share/Recordings/iq/00_50_1a_02_2c_be', 'file:///home/jay')}}"></td><td>{{image.IQimage['motionWindows']}}</td><td>{{image.IQimage['time']}}</td>
-      </tr>
-    </table>
+<body ng-controller="ImageFetch">
+  <!-- TimeSelector filter -->
+  <table border=1>
+    <tr><th>Path</th><th>Detected Motion Windows</th><th>Timestamp</th></tr>
+    <tr ng-repeat="image in images">
+      <td><!--<img width=600 ng-src="{{image.path.replace('/share/Recordings/iq/00_50_1a_02_2c_be', 'file:///home/jay')}}"></td>-->{{image.path}}<td>{{image.IQimage['motionWindows']}}</td><td>{{image.IQimage['time'] | date:'medium'}}</td>
+    </tr>
+  </table>
 </body>
 </html>
