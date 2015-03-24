@@ -33,30 +33,16 @@ collection = db.images # how do I call the app.config vars above as strings?
 
 # get API going
 api = Api(app)
-
-# single event of many images, image grouping comes later
-class Event(Resource):
-  def get(self, event_id):
-    return {'request data': request.args, 'event_id': event_id}
-
-  def post(self):
-    return {'request data': request.args}
-    
-  def delete(self):
-    return {'request data': request.args}
     
 # many events of many images, event grouping comes later
 class Events(Resource):
   def get(self, start_datetime, end_datetime):
-    print(str(start_datetime) + str(end_datetime))
     # exclude _id or the JSON serializer freaks out
     
     # filter only +00 events
     #regex = re.compile('.*trig\+00.jpg')
     #result = collection.find({ '$and': [ { "IQimage.time" : { '$gt': int(epoch_start), '$lt': int(epoch_end) } }, {'path': {'$regex': regex} } ] }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
     result = collection.find({ "IQimage.time" : { '$gt': start_datetime, '$lt': end_datetime } }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
-    
-    
     
     return {'request data': request.args, 'est_size': '%sMB' % round(((result.count() * 300)/1024),2), 'start_date': start_datetime, 'end_date': end_datetime, 'results': list(result), 'resultcount': result.count()}, 200
 
@@ -73,7 +59,7 @@ class Events(Resource):
     if args['group'] == True:
       event_list = []
       results = list(result) # can only use this once, it empties the result object
-      dwell_time = args['dwell_time_secs'] * 1000
+      dwell_time = int(args['dwell_time_secs']) * 1000
 
       startFrame = results[0]['IQimage']['time']
       lastFrame = results[0]['IQimage']['time']
@@ -90,7 +76,7 @@ class Events(Resource):
         
         # BUG: last if there is no end to the last event, those JPGs are not included in the grouping
     
-    return { 'args': args, 'results': results, 'event_grouping': event_list}, 200
+    return { 'args': args, 'resultcount': len(event_list), 'event_grouping': event_list}, 200
 
     
   def delete(self):

@@ -1,18 +1,64 @@
 <!DOCTYPE html>
-<html ng-app="myApp">
+<html>
 <head>
   <title>Camera Player</title>
-  <script src="assets/angular.js"></script>
-  <script src="assets/angular-route.js"></script>
+
+  <script src="assets/js/angular.min.js"></script>
+  <script src="assets/js/angular-route.js"></script>
+  <script src="assets/js/ui-bootstrap-tpls-0.12.1.js"></script>
+  
   <script src="app/app.js"></script>
+  
+  <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+  
 </head>
-<body ng-controller="ImageFetch">
-  <!-- TimeSelector filter -->
-  <table border=1>
-    <tr><th>Path</th><th>Detected Motion Windows</th><th>Timestamp</th></tr>
-    <tr ng-repeat="image in images">
-      <td><!--<img width=600 ng-src="{{image.path.replace('/share/Recordings/iq/00_50_1a_02_2c_be', 'file:///home/jay')}}"></td>-->{{image.path}}<td>{{image.IQimage['motionWindows']}}</td><td>{{image.IQimage['time'] | date:'medium'}}</td>
-    </tr>
-  </table>
+<body ng-app="myApp">
+
+  <div ng-controller="EventGetter">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <pre>Selected date/time is: <em>{{dt | date:'fullDate' }} {{starttime | date:'shortTime' }} THROUGH {{endtime | date:'shortTime' }}</em></pre>
+        </div> <!-- END col-md-12 -->
+      </div> <!-- END row -->
+      <div class="row">
+        <div class="col-md-6">
+
+          <h4>Date</h4>
+          <div style="display:inline-block; min-height:290px;">
+            <datepicker ng-model="dt" ng-change="datechanged()" show-weeks="true" class="well well-sm"></datepicker>
+                <button type="button" class="btn btn-sm btn-info" ng-click="today()">Today</button>
+          </div>
+          
+        </div> <!-- END col-md-6 -->
+        <div class="col-md-6">
+          
+          <h4>Time</h4>
+          <p>Start:</p><timepicker ng-model="starttime" ng-change="timechanged()" hour-step="hstep" minute-step="mstep" show-meridian="ismeridian">
+          </timepicker>
+          <p>End:</p><timepicker ng-model="endtime" ng-change="timechanged()" hour-step="hstep" minute-step="mstep" show-meridian="ismeridian"></timepicker>
+
+          <hr>
+
+          <button class="btn btn-info" ng-click="toggleMode()">12H / 24H</button>
+          <button class="btn btn-default" ng-click="update()">Set to daylight hours</button>
+          <button class="btn btn-danger" ng-click="clear()">Clear</button>
+          <button class="btn btn-danger" ng-click="timechanged()">Submit</button>
+          
+        </div> <!-- END col-md-6 -->
+        <div class="col-md-12">
+            
+          <table border=1>
+            <tr><th>Path</th><th>Detected Motion Windows</th><th>Timestamp</th></tr>
+            <tr ng-repeat="image in images">
+              <td><!--<img width=600 ng-src="{{image.path.replace('/share/Recordings/iq/00_50_1a_02_2c_be', 'file:///home/jay')}}"></td>-->{{image.path}}<td>{{image.IQimage['motionWindows']}}</td><td>{{image.IQimage['time'] | date:'medium'}}</td>
+            </tr>
+          </table>
+        
+        </div> <!-- END col-md-12 -->
+      </div> <!-- END row -->
+    </div> <!-- END container -->
+  </div> <!-- END ng-controller (EventGetter) -->
+    
 </body>
 </html>
