@@ -85,4 +85,4 @@ class Events(Resource):
 api.add_resource(Events, '/events/range/<int:start_datetime>/<int:end_datetime>/')
 
 if __name__ == '__main__':
-    app.run(host=0.0.0.0)
+    app.run(host="0.0.0.0")
