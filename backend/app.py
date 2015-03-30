@@ -48,15 +48,15 @@ class Events(Resource):
 
   def post(self, start_datetime, end_datetime):
     parser = reqparse.RequestParser()
-    parser.add_argument('group', type=bool, help='group the events requires true or false')
-    parser.add_argument('dwell_time_secs', type=int, help='time before the next activity is considered a new event')
-    parser.add_argument('sloppy_results', type=bool, help='if the time window "cuts off" the event, those extra JPG frames are included anyway')
+    parser.add_argument('group', type=bool, help='group the events requires true or false', default=True)
+    parser.add_argument('dwell_time_secs', type=int, help='time before the next activity is considered a new event', default=3)
+    parser.add_argument('sloppy_results', type=bool, help='if the time window "cuts off" the event, those extra JPG frames are included anyway', default=False)
     
     args = parser.parse_args()
     
     result = collection.find({ "IQimage.time" : { '$gt': start_datetime, '$lt': end_datetime } }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
 
-    if args['group'] == True:
+    if args['group'] == True and result.count() != 0:
       event_list = []
       results = list(result) # can only use this once, it empties the result object
       dwell_time = int(args['dwell_time_secs']) * 1000
@@ -76,8 +76,9 @@ class Events(Resource):
         
         # BUG: last if there is no end to the last event, those JPGs are not included in the grouping
     
-    return { 'args': args, 'resultcount': len(event_list), 'event_grouping': event_list}, 200
-
+      return { 'args': args, 'resultcount': len(event_list), 'event_grouping': event_list}, 200
+    else:
+      return {'request data': request.args, 'est_size': '%sMB' % round(((result.count() * 300)/1024),2), 'start_date': start_datetime, 'end_date': end_datetime, 'results': list(result), 'resultcount': result.count()}, 200
     
   def delete(self):
     return {'request data': request.args}
