@@ -1,12 +1,11 @@
 var app = angular.module('myApp', ['ngRoute','ui.bootstrap']);
 
-app.controller('EventGetter', function($scope, $http, $location, $log) {
-  var arg = $location.url().substring(1).split(':')
+app.controller('EventGetter', function($scope, $http, $log) {
   
   $scope.today = function() {
-  $scope.dt = new Date();
+    $scope.dt = new Date(); // set default date here? First day camera is active?
   };
-  $scope.today();
+  //$scope.today(); // unfortunately clears the scope every time something is triggered
 
   $scope.clear = function () {
     $scope.dt = null;
@@ -39,8 +38,8 @@ app.controller('EventGetter', function($scope, $http, $location, $log) {
   $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
   $scope.format = $scope.formats[0];
   
-  $scope.starttime = $scope.dt;
-  $scope.endtime = $scope.dt;
+  //$scope.starttime = $scope.dt;
+  //$scope.endtime = $scope.dt;
 
   $scope.hstep = 1;
   $scope.mstep = 15;
@@ -54,7 +53,7 @@ app.controller('EventGetter', function($scope, $http, $location, $log) {
   $scope.toggleMode = function() {
     $scope.ismeridian = ! $scope.ismeridian;
   };
-
+/*
   $scope.update = function() {
     var sunrise = new Date();
     var sunset = new Date();
@@ -65,31 +64,73 @@ app.controller('EventGetter', function($scope, $http, $location, $log) {
     $scope.starttime = sunrise;
     $scope.endtime = sunset;
   };
-
+*/
   $scope.timechanged = function () {
     $log.log('Times changed to: ' + $scope.starttime + ' and ' + $scope.endtime);
-    $http.post('http://localhost:5000/events/range/' + $scope.starttime.getTime() + '/' + $scope.endtime.getTime() + '/').
+    
+    var dataObj = {
+      group : $scope.group,
+      dwell_time_secs : $scope.dwell_time_secs,
+      sloppy_results : $scope.sloppy_results
+      };
+
+    $http.post('http://23.253.23.110:5000/events/range/' + $scope.starttime.getTime() + '/' + $scope.endtime.getTime() + '/', dataObj).
       success(function(data, status) {
-        $scope.images = [];
-        data.results.forEach(function(t) {
-          $scope.images.push(t);
+        $scope.resultcount = data.resultcount;
+        
+        if (data.resultcount > 0 && $scope.group) { // fill events table
+          $scope.events = [];
+          $scope.images = [];
+          data.result.forEach(function(t) {
+            $scope.events.push(t);
+          });
+        } else {
+          if (data.resultcount == 0 && $scope.group) { // clear the events table
+            $scope.events = []; 
+          } else {
+              if (data.resultcount > 0) { // fill the images table
+                $scope.est_size = data.est_size;
+                $scope.events = [];
+                $scope.images = [];
+                  data.result.forEach(function(t) {
+                    $scope.images.push(t);
+                  });
+              } else { // clear the images table
+                  $scope.images = [];
+                }
+            } 
+          }
         });
-      });
   };
   
   $scope.datechanged = function () {
-    $log.log($scope.dt.getFullYear());
-    $scope.starttime.setFullYear($scope.dt.getFullYear());
-    $scope.starttime.setMonth($scope.dt.getMonth());
-    $scope.starttime.setDate($scope.dt.getDate());
-    $scope.endtime.setFullYear($scope.dt.getFullYear());
-    $scope.endtime.setMonth($scope.dt.getMonth());
-    $scope.endtime.setDate($scope.dt.getDate());
-    $log.log('Times changed to: ' + $scope.starttime + ' and ' + $scope.endtime);
+    $scope.starttime = $scope.dt;
+    $log.log($scope.starttime.getTime());
+    $scope.endtime = $scope.dt;
+    $log.log($scope.endtime.getTime());
   };
   
   $scope.clear = function() {
     $scope.starttime = null;
     $scope.endtime = null;
   };
+});
+
+app.controller('Player', function($scope, $http, $location, $log) {
+  var arg = $location.url();
+  
+  $scope.onload = function () {
+    $http.get('http://localhost:5000/events/range' + arg + '/').
+      success(function(data, status) {
+        $scope.resultcount = data.resultcount;
+          if (data.resultcount > 0) { // pass image list to sequencer
+            $scope.est_size = data.est_size;
+            $scope.images = [];
+              data.result.forEach(function(t) {
+                $scope.images.push(t);
+              });
+          }
+      });
+    };
+  $scope.onload();
 });
