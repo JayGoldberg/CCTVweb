@@ -34,6 +34,9 @@
         <div class="col-md-6">
           
           <h4>Time</h4>
+          <input ng-model="group" type="checkbox" value="False">Group Images into Events</input>
+          <input ng-model="dwell_time_secs" type="text">Dwell Time</input>
+          
           <p>Start:</p><timepicker ng-model="starttime" ng-change="timechanged()" hour-step="hstep" minute-step="mstep" show-meridian="ismeridian">
           </timepicker>
           <p>End:</p><timepicker ng-model="endtime" ng-change="timechanged()" hour-step="hstep" minute-step="mstep" show-meridian="ismeridian"></timepicker>
@@ -46,12 +49,22 @@
           <button class="btn btn-danger" ng-click="timechanged()">Submit</button>
           
         </div> <!-- END col-md-6 -->
+        
         <div class="col-md-12">
-            
+          <hr>
+          
+          {{resultcount}} items in this resultset, totaling about {{est_size}}
           <table border=1>
             <tr><th>Path</th><th>Detected Motion Windows</th><th>Timestamp</th></tr>
             <tr ng-repeat="image in images">
-              <td><!--<img width=600 ng-src="{{image.path.replace('/share/Recordings/iq/00_50_1a_02_2c_be', 'file:///home/jay')}}"></td>-->{{image.path}}<td>{{image.IQimage['motionWindows']}}</td><td>{{image.IQimage['time'] | date:'medium'}}</td>
+              <td>{{image.path}}</td><td>{{image.IQimage['motionWindows']}}</td><td>{{image.IQimage['time'] | date:'medium'}}</td>
+            </tr>
+          </table>
+          <br />
+          <table border=1>
+            <tr><th>Count</th><th>Start Frame</th><th>End Frame</th></tr>
+            <tr ng-repeat="event in events">
+              <td><a href="/player.html#{{event[0]}}/{{event[1]}}">{{event[2]}}</a></td><td>{{event[0]}}</td><td>{{event[1]}}</td>
             </tr>
           </table>
         
