@@ -1,16 +1,16 @@
 CCTVweb
 =======
-Browse and manage MJPEG (motion JPEG) images written to FTP from IQinvision IQeye IP Cameras through a web interface
+Through a web interface, browse and manage JPEG images written to FTP by IQinvision IQeye IP cameras.
 
-Events are grouped together and individual events can be replayed in real-time or by mouse wheel scrolling. The player is based on JavaScript CSS.
+JPEGs are grouped together into events, and events can be replayed in real-time or by mouse wheel scrolling. The player is a still-frame player based on open web technologies.
 
 Architecture
 ============
-CCTVweb currently depends on the JPEG comment (COM) fields written by IQinvision IQeye network cameras. Using a perl script, this data is read, and is inserted into a database. A web frontend interfaces with a Python Flask backend to offer a browser-based event viewer, an interface to run queries and set warnings and limits on cameras. Cameras are responsible for FTP'ing images, but no further intelligence is needed from them.
+CCTVweb currently depends on the JPEG comment (COM) fields written by IQinvision IQeye network cameras. Using a small utility, this data is read, and is inserted into a database. A web frontend interfaces with a Python Flask backend to offer a browser-based event viewer, an interface to run queries and set warnings and limits on cameras. Cameras are responsible for FTP'ing images, but no further intelligence is needed from them.
 
 Planned Features
 ============
-* Completely web-based viewer
+* Completely web-based viewer, no plugins required
 * Preview all events for a single day
 * Play events sequentially
 * Play events forwards backwards
@@ -23,8 +23,7 @@ Planned Features
 Requirements
 ============
 * Linux server
-* perl
-  * exiftool
+* libjpeg (specifically the rdjpgcom utility)
 * python3
   * virtualenv
   * flask
