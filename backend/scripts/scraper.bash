@@ -10,7 +10,7 @@
 #notes         :make sure that column heading are stripped on each subsequent run of exiftool in the loop
 #==============================================================================
 
-for day in `ls ${1}`; do for hour in `ls ${1}/${day}`; do for file in `ls ${day}/${hour}`; do echo -n ${day}/${hour}/${file}, >> ${2}; rdjpgcom ${day}/${hour}/${file} | sed -n -e '2{p;q}' >> ${2}; done; done; done
+for day in ${1}/*; do for hour in ${day}/*; do for file in ${hour}/*.jpg; do echo -n ${file}, >> ${2}; rdjpgcom ${file} | sed -n -e '2{p;q}' >> ${2}; done; done; done
 
 # this method is actually slower! thought that one file write per loop would be faster...
-#for day in `ls ${1}`; do for hour in `ls ${1}/${day}`; do for file in `ls ${day}/${hour}`; do filepath="${day}/${hour}/${file},"; comment=$(rdjpgcom ${day}/${hour}/${file} | sed -n -e '2{p;q}'); echo ${filepath}{$comment} >> ${2}; done; done; done
+#for day in  ${1}/*; do for hour in ${day}/*; do for file in ${hour}/*; do filepath=${file},"; comment=$(rdjpgcom ${file} | sed -n -e '2{p;q}'); echo ${filepath}{$comment} >> ${2}; done; done; done
