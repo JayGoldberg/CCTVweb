@@ -42,7 +42,7 @@ class Events(Resource):
     # filter only +00 events
     #regex = re.compile('.*trig\+00.jpg')
     #result = collection.find({ '$and': [ { "IQimage.time" : { '$gt': int(epoch_start), '$lt': int(epoch_end) } }, {'path': {'$regex': regex} } ] }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
-    result = collection.find({ "IQimage.time" : { '$gt': start_datetime, '$lt': end_datetime } }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
+    result = collection.find({ "IQimage.time" : { '$gte': start_datetime, '$lte': end_datetime } }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
     
     return { 'args': request.args, 'result': list(result[0:200]), 'est_size': '%sMB' % round(((result.count() * 300)/1024),2), 'start_date': start_datetime, 'end_date': end_datetime, 'resultcount': result.count() }, 200
 
@@ -55,7 +55,7 @@ class Events(Resource):
     args = parser.parse_args()
     print(args)
     
-    result = collection.find({ "IQimage.time" : { '$gt': start_datetime, '$lt': end_datetime } }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
+    result = collection.find({ "IQimage.time" : { '$gte': start_datetime, '$lte': end_datetime } }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
 
     if args['group'] == True and result.count() != 0:
       event_list = []
