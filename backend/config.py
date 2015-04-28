@@ -23,3 +23,4 @@ class Config(object):
   MONGO_DB = 'mydb'
   RESULT_LIMIT = 10000
   DEBUG = True
+  AVG_FILE_SIZE = 300
