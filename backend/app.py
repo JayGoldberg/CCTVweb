@@ -52,11 +52,12 @@ class Events(Resource):
     parser.add_argument('group', type=bool, help='group the events requires true or false', location='json', default=True)
     parser.add_argument('dwell_time_secs', type=int, help='time before the next activity is considered a new event', location='json', default=app.config['DEFAULT_DWELL_SECS'])
     parser.add_argument('sloppy_results', type=bool, help='if the time window "cuts off" the event, those extra JPG frames are included anyway', location='json', default=False)
+    parser.add_argument('cam_name', type=str, help='camera name', location='json', default='aptcourtyard')
     
     args = parser.parse_args()
     print(args)
     
-    result = query(camname, start_datetime, end_datetime)
+    result = query(args['cam_name'], start_datetime, end_datetime)
 
     if args['group'] == True and result.count() != 0:
       event_list = []
@@ -81,7 +82,7 @@ class Events(Resource):
     
       return { 'args': request.args, 'result': event_list, 'resultcount': len(event_list) }, 200
     else:
-      return { 'args': request.args, 'result': list(result[0:app.config['RESULT_LIMIT']]), 'est_size': '%sMB' % round(((result.count() * app.config['AVG_FILE_SIZE'])/1024),2), 'start_date': start_datetime, 'end_date': end_datetime, 'resultcount': result.count() }, 200
+      return { 'args': request.args, 'result': list(result[0:app.config['RESULT_LIMIT']]), 'est_size': '%sMB' % round(((result.count() * app.config['AVG_FILE_SIZE'])/1024),2), 'start_date': start_datetime, 'end_date': end_datetime, 'resultcount': result.count(), 'imgbase': app.config['CAMERAS'][camname] }, 200
     
   def delete(self, camname, start_datetime, end_datetime):
     #result = query(start_datetime, end_datetime)
