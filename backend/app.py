@@ -38,7 +38,9 @@ def query(camera, epoch_start, epoch_end):
   #regex = re.compile('.*trig\+00.jpg')
   #result = db[camera].find({ '$and': [ { "IQimage.time" : { '$gt': int(epoch_start), '$lt': int(epoch_end) } }, {'path': {'$regex': regex} } ] }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
   
-  return db[camera].find({ "IQimage.time": { '$gte': epoch_start, '$lte': epoch_end } }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
+  #db[camera].find({ "IQimage.time": { '$gte': epoch_start, '$lte': epoch_end } }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
+  
+  return db[camera].find({ '$and': [{ "IQimage.time": { '$gte': epoch_start, '$lte': epoch_end } }, { 'isDeleted': { '$ne': 'true' } }] }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
 
 class Events(Resource):
     
