@@ -71,10 +71,11 @@ app.controller('EventGetter', function($scope, $http, $log) {
     var dataObj = {
       group : $scope.group,
       dwell_time_secs : $scope.dwell_time_secs,
-      sloppy_results : $scope.sloppy_results
+      sloppy_results : $scope.sloppy_results,
+      cam_name: $scope.cam_name
       };
 
-    $http.post('http://23.253.23.110:5000/events/range/' + $scope.starttime.getTime() + '/' + $scope.endtime.getTime() + '/', dataObj).
+    $http.post('http://<your_flask_backend>:5000/events/range/' + $scope.cam_name + '/' + $scope.starttime.getTime() + '/' + $scope.endtime.getTime() + '/', dataObj).
       success(function(data, status) {
         $scope.resultcount = data.resultcount;
         
@@ -114,23 +115,4 @@ app.controller('EventGetter', function($scope, $http, $log) {
     $scope.starttime = null;
     $scope.endtime = null;
   };
-});
-
-app.controller('Player', function($scope, $http, $location, $log) {
-  var arg = $location.url();
-  
-  $scope.onload = function () {
-    $http.get('http://localhost:5000/events/range' + arg + '/').
-      success(function(data, status) {
-        $scope.resultcount = data.resultcount;
-          if (data.resultcount > 0) { // pass image list to sequencer
-            $scope.est_size = data.est_size;
-            $scope.images = [];
-              data.result.forEach(function(t) {
-                $scope.images.push(t);
-              });
-          }
-      });
-    };
-  $scope.onload();
 });

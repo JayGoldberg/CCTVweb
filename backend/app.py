@@ -38,7 +38,7 @@ def query(camera, epoch_start, epoch_end):
   #regex = re.compile('.*trig\+00.jpg')
   #result = db[camera].find({ '$and': [ { "IQimage.time" : { '$gt': int(epoch_start), '$lt': int(epoch_end) } }, {'path': {'$regex': regex} } ] }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
   
-  return db[camera].find({ "IQimage.time" : { '$gte': epoch_start, '$lte': epoch_end } }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
+  return db[camera].find({ "IQimage.time": { '$gte': epoch_start, '$lte': epoch_end } }, { '_id': 0, 'IQimage.imgjdbg': 0, 'IQimage.sequence': 0 } ).sort("IQimage.time")
 
 class Events(Resource):
     
@@ -85,10 +85,7 @@ class Events(Resource):
       return { 'args': request.args, 'result': list(result[0:app.config['RESULT_LIMIT']]), 'est_size': '%sMB' % round(((result.count() * app.config['AVG_FILE_SIZE'])/1024),2), 'start_date': start_datetime, 'end_date': end_datetime, 'resultcount': result.count(), 'imgbase': app.config['CAMERAS'][camname] }, 200
     
   def delete(self, camname, start_datetime, end_datetime):
-    #result = query(start_datetime, end_datetime)
-    #for item in cursor:
-      # broken until we find out how to allow _id to be passed without breaking the other HTTP methods, as we need _id to be able to update records
-      #item.update( { "_id" :ObjectId("objectid_here") },{ $set : { "isDeleted":True } } )
+    result = db[camname].update({ 'IQimage.time': { '$gte': start_datetime, '$lte': end_datetime } }, { '$set': { 'isDeleted': 'true' } }, multi=True, upsert=False)
     return {'request data': request.args}
 
 api.add_resource(Events, '/events/range/<string:camname>/<int:start_datetime>/<int:end_datetime>/')
