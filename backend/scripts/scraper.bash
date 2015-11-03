@@ -8,30 +8,31 @@
 #usage         :bash scraper.bash <dir with day dirs> <filename.csv>
 #==============================================================================
 
-for day in ${1}/*
-  do for hour in ${day}/*
-    do for path in ${hour}/*.jpg
-      do 
-        if [ -f ${path} ]
-          then
-            comment=$(rdjpgcom ${path})
-            if [ $? -eq 0 ]
-              then
-                json=$(cut -d' ' -f2 <<< ${comment})
-                echo ${path},${json} >> ${2}
-            fi
+path=$1
+totalcount=0 # set this first or USR1 will kill the script
+currentcount=0
 
+sigusr1()
+{
+   echo "${currentcount}/${totalcount}"
+}
+
+trap 'sigusr1' USR1
+
+totalcount=$(find ${path} -type f -name *.jpg|wc -l)
+
+for day in ${path}/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]
+  do for hour in ${day}/??
+    do for imagefile in ${hour}/*.jpg
+      do
+        # ensure atomicity, do not write half-lines! Use assignment failure as an indicator 
+        json=$(rdjpgcom ${imagefile}|sed -n '2p')
+        if [ $? -eq 0 ]
+          then
+            echo ${imagefile},${json} >> ${2}
         fi
+        currentcount=$((currentcount + 1))
       done
     done
   done
 
-# this method is actually slower! thought that one file write per loop would be faster...
-#for day in  ${1}/*
-#  do for hour in ${day}/*
-#    do for file in ${hour}/*
-#      do
-#        filepath=${file},"; comment=$(rdjpgcom ${file} | sed -n -e '2{p;q}'); echo ${filepath}{$comment} >> ${2}
-#      done
-#    done
-# done
