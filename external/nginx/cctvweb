@@ -1,0 +1,33 @@
+# the upstream component nginx needs to connect to
+upstream flask_cctv_uwsgi {
+    # server unix:///path/to/your/mysite/mysite.sock; # for a file socket (TODO: future)
+    server 127.0.0.1:5000; # for a web port socket (this works)
+}
+
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server ipv6only=on;
+
+	root /usr/share/nginx/html;
+	index index.html
+
+	server_name localhost cctv.yourdomain.com static1.yourdomain.com static2.yourdomain.com static3.yourdomain.com static4.yourdomain.com;
+
+        location /images {
+		alias /mnt/imagedata;
+	}
+
+        location /static {
+                alias /path/to/CCTVweb/frontend/
+
+	charset     utf-8;
+
+	# max upload size
+	client_max_body_size 10M;
+
+	# Otherwise, dynamic requests:
+	location / {
+		uwsgi_pass  flask_cctv_uwsgi;
+		include     /etc/nginx/uwsgi_params;
+	}
+}

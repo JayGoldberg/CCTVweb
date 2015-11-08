@@ -3,25 +3,20 @@
 __author__ = "Jay Goldberg"
 __copyright__ = "Copyright 2015"
 __credits__ = ["Jay Goldberg"]
-__license__ = "MIT"
+__license__ = "Apache 2.0"
 __maintainer__ = "Jay Goldberg"
 __email__ = "jaymgoldberg@gmail.com"
-__status__ = "Alpha"
 
 import time, re
 from flask import Flask, jsonify, request, render_template
 from flask.ext.pymongo import PyMongo, MongoClient
 from flask.ext.restful import Api, Resource, reqparse
-from flask.ext.cors import CORS
+import config
 
 app = Flask(__name__)
 
-# Enable Cross-Origin Resource Sharing
-cors = CORS(app)
-
-# see config.py, 2nd option is to override the settings in first config, for testing, etc.
+# see config.py
 app.config.from_object('config.Config')
-app.config.from_envvar('CCTVWEB_CONF')
 
 # establish DB connection
 client = MongoClient(app.config['MONGO_URI'])
@@ -89,9 +84,22 @@ class Events(Resource):
   def delete(self, camname, start_datetime, end_datetime):
     result = db[camname].update({ 'IQimage.time': { '$gte': start_datetime, '$lte': end_datetime } }, { '$set': { 'isDeleted': 'true' } }, multi=True, upsert=False)
     return {'request data': request.args}
+    
+class Test(Resource):
+  def get(self):
+    return("Hello World! The Flask part is working.")
+
+class Browser(Resource)
+  def get(self):
+    return render_template('browser.html')
+
+class Player(Resource)
+  def get(self):
+    return render_template('player.html')
 
 api.add_resource(Events, '/events/range/<string:camname>/<int:start_datetime>/<int:end_datetime>/')
 #api.add_resource(Reports, '/reports/<str:camname>/<int:start_datetime>/<int:end_datetime>/') # Post-only endpoint?
+api.add_resource(Test, '/')
 
 if __name__ == '__main__':
-  app.run(host="0.0.0.0")
+  app.run(host="127.0.0.1")

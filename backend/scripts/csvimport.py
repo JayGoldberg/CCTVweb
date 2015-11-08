@@ -3,11 +3,9 @@
 __author__ = "Jay Goldberg"
 __copyright__ = "Copyright 2015"
 __credits__ = ["Jay Goldberg"]
-__license__ = "MIT"
-__version__ = "0.0.1"
+__license__ = "Apache 2.0"
 __maintainer__ = "Jay Goldberg"
 __email__ = "jaymgoldberg@gmail.com"
-__status__ = "Alpha"
 
 import os, sys, csv, json, datetime
 import pymongo
