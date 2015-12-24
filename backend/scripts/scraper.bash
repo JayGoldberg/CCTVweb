@@ -9,35 +9,36 @@
 #==============================================================================
 
 path=$1
-csvpath=$2
 totalcount=0 # set this first or USR1 will kill the script if you send 
 # the signal before the var has been assigned
 currentcount=0
 
 sigusr1()
 {
-   echo "${currentcount}/${totalcount}"
+  echo "${currentcount}/${totalcount}"
 }
 
 trap 'sigusr1' USR1
 
-totalcount=$(find ${path} -type f -name *.jpg|wc -l)
+# if path not defined
+echo "Path not specified on commandline, using working path" >&2
+if [ -z "$path" ]; then
+  path=$(pwd)
 
-for day in ${path}/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]
-  do for hour in ${day}/??
-    do for imagefilepath in ${hour}/*.jpg
-      do
-        json=''
-        json=$(rdjpgcom ${imagefilepath}|sed -n '2p')
-        # ensure atomicity, do not write half-lines! Use empty assignment as an indicator 
-        if [ -n "$json" ]
-          then
-            echo ${imagefilepath},${json} >> ${csvpath}
-          else
-            echo "Bad file!"
-        fi
-        currentcount=$((currentcount + 1))
-      done
-    done
-  done
+totalcount=$(find ${path} -type f -name '*.jpg'|wc -l)
 
+read_com() {
+  json=''
+  json=$(rdjpgcom "$1"|sed -n '2p')
+  # ensure atomicity, do not write half-lines! Use empty assignment as an indicator 
+  if [ -n "$json" ]; then
+    echo ${1},${json}
+  else
+    echo "Bad file!" >&2
+}
+
+while read path; do
+  #echo $path
+  read_com "$path"
+  currentcount=$((currentcount + 1))
+done < <(find ${path} -type f -name '*.jpg')
