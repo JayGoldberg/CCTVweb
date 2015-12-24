@@ -13,17 +13,11 @@ totalcount=0 # set this first or USR1 will kill the script if you send
 # the signal before the var has been assigned
 currentcount=0
 
-sigusr1()
-{
+sigusr1() {
   echo "${currentcount}/${totalcount}"
 }
 
 trap 'sigusr1' USR1
-
-# if path not defined
-echo "Path not specified on commandline, using working path" >&2
-if [ -z "$path" ]; then
-  path=$(pwd)
 
 totalcount=$(find ${path} -type f -name '*.jpg'|wc -l)
 
@@ -35,10 +29,11 @@ read_com() {
     echo ${1},${json}
   else
     echo "Bad file!" >&2
+  fi
 }
 
-while read path; do
+while read filepath; do
   #echo $path
-  read_com "$path"
+  read_com "$filepath"
   currentcount=$((currentcount + 1))
 done < <(find ${path} -type f -name '*.jpg')
