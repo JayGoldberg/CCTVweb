@@ -11,7 +11,6 @@ import os
 import sys
 import csv
 import json
-import datetime
 
 from mongochunkimport import MongoChunkImport
 
@@ -24,7 +23,7 @@ if __name__ == '__main__':
     print('Opening file %s' % filepath)
 
     # TODO: put this in a try block
-    f = open(filepath)
+    f = open(filepath, 'r')
   
     for lineno, content in enumerate(f):
       pass
