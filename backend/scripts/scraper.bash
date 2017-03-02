@@ -5,7 +5,7 @@
 #author        :Jay Goldberg
 #url           :https://github.com/JayGoldberg/CCTVweb
 #license       :Apache 2.0
-#usage         :bash scraper.bash <dir with day dirs> <filename.csv>
+#usage         :bash scraper.bash searchdir > outfile.csv
 #==============================================================================
 
 path=$1
@@ -14,7 +14,7 @@ totalcount=0 # set this first or USR1 will kill the script if you send
 currentcount=0
 
 sigusr1() {
-  echo "${currentcount}/${totalcount}"
+  echo "${currentcount}/${totalcount}" >&2
 }
 
 trap 'sigusr1' USR1
