@@ -9,11 +9,10 @@ __email__ = "jaymgoldberg@gmail.com"
 
 import os
 import sys
-import csv
 import json
 import sqlite3
 
-def recordgenerator(filepath):
+def recordgenerator(camname, filepath):
 
   print('Opening file %s' % filepath)
 
@@ -23,14 +22,16 @@ def recordgenerator(filepath):
       pass
   
     f.seek(0)
-    
-    mylist = []
+
     for line in f:
+      # TODO: reintroduce status functionality (progress)
+      #print("{0:.0f}%".format((float(i) / lineno) * 100))
+      # TODO: use csv library instead of naive split
       pair = line.split(',', 1)
       path = pair[0] # the first element is always the path
+      # TODO: error handling for when JSON is not JSON
       decoded = json.loads(pair[1]) # parse the json field in the CSV
-      #mylist += [path, decoded['IQimage']['time']]
-      yield (path, decoded['IQimage']['time'],)
+      yield (camname, path, pair[1], decoded['IQimage']['time'], json.dumps(decoded['IQimage']['event']), False)
 
 if __name__ == '__main__':
   dbname = sys.argv[1]
@@ -39,27 +40,35 @@ if __name__ == '__main__':
   
   # example JSON: {"IQimage":{"sequence":2542282,"time":1408160269221,"event":["none"],"imgjdbg":" 998/004:16/5/167:080/071/01/4/57/70/20/00:06/06/09:c3"}}
 
-  table_name=camname
-  field1='path'
-  field2='rawjson'
-  field3='time'
-  field4='event'
-  field5='isDeleted'
-  field1_type='TEXT'
-  field2_type='TEXT'
-  field3_type='INTEGER'
-  field4_type='TEXT'
-  field5_type='INTEGER'
-  
+  schema = [
+      #'cam_id INT',
+      'cam_name TEXT',
+      'path TEXT',
+      'rawjson TEXT',
+      'time INTEGER',
+      'event TEXT',
+      'isDeleted INTEGER',
+      #'FOREIGN KEY() REFERENCES cameras(id)',
+  ]
+
   conn = sqlite3.connect(dbname)
   
   c = conn.cursor()
+
+  schemastring = ''.join(['{}, '.format(field) for field in schema])[:-2]
   
-  c.execute('CREATE TABLE IF NOT EXISTS {}({} {}, {} {}, {} {}, {} {})'\
-  .format(table_name, field1, field1_type, field2, field2_type, field3, field3_type, field4, field4_type, field5, field5_type))
+  c.execute('CREATE TABLE IF NOT EXISTS {}({})'\
+      .format('images', schemastring))
 
-  c.executemany('INSERT INTO {}(path, time) VALUES(?, ?)'.format(table_name), recordgenerator(filepath))
+  # needed when /tmp is too small
+  # choose a directory that has enough space for the csv in question
+  # TODO: detect available space compared to input file, have a runtime flag
+  c.execute('PRAGMA temp_store = 1')
+  c.execute('PRAGMA temp_store_directory = "/tmp"')
 
-  c.execute('CREATE INDEX times ON apt(time)')
+  c.executemany('INSERT INTO {}(cam_name, path, rawjson, time, event, isDeleted) VALUES(?, ?, ?, ?, ?, ?)'\
+      .format('images'), recordgenerator(camname, filepath))
+
+  c.execute('CREATE INDEX IF NOT EXISTS times ON {}(time)'.format('images'))
   conn.commit()
   conn.close()
