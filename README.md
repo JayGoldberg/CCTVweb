@@ -1,63 +1,61 @@
 CCTVweb
 =======
-Through a web interface, browse and manage JPEG images written to FTP by IQinvision IQeye IP cameras.
+Browse and manage JPEG images written to FTP by IQinvision IQeye IP cameras, in a nice web-based app!
 
-JPEGs are grouped together into events, and events can be replayed in real-time or by mouse wheel scrolling. The player is a still-frame player based on open web technologies.
+JPEGs are grouped together into events, and events can be replayed in real-time or by mouse movement. The player is a still-frame player based on open web technologies.
 
 Architecture
 ============
-CCTVweb currently depends on the JPEG comment (COM) fields written by IQinvision IQeye network cameras. Using a small utility, this data is read, and is inserted into a database. A web frontend interfaces with a Python Flask backend to offer a browser-based event viewer, an interface to run queries and set warnings and limits on cameras. Cameras are responsible for FTP'ing images, but no further intelligence is needed from them.
+CCTVweb currently depends on the JPEG comment (COM) fields written by IQinvision IQeye network cameras. Cameras are responsible for FTP'ing images, but no further intelligence is needed from them, the indexing, management, and playback is handled by CCTVweb.
 
 Planned Features
 ============
 * Completely web-based viewer, no plugins required
 * Preview all events for a single day
 * Play events sequentially
-* Play events forwards backwards
+* Play events forwards/backwards
 * Scroll through events frame-by-frame
 * Set alert thresholds
   * ie. if camera is recording over 25% more motion today than yesterday, send an email
+* Fast JPEG indexing
 * Fast backend engine for returning image data
 * AngularJS frontend
+* Support for Google Cloud Storage
+* Nice graphs of camera activity
+* Image recognition capability using Google Machine Vision
+* CORS support and static file serving
+* Support for relays (for door locks), HTTP triggers
 
 Requirements
 ============
 * Linux server
-* libjpeg (specifically the rdjpgcom utility)
+* nginx/lighttpd
 * python3
   * virtualenv
   * flask
-  * Flask-PyMongo
   * Flask-RESTful
-  * Flash-CORS
-* mongodb
+* sqlite3
+* nodejs
 
 Installation
 ============
-1. Get the most recent source:
-  - git clone https://github.com/JayGoldberg/CCTVweb
-2. Install mongodb
-3. Install Python3 and pre-reqs below
-4. Import sample data from .csv into mongodb
-`CCTVweb/backend/scripts/csvimport.py CCTVweb/data/sanitized.csv`
-5. Generate indexes on IQimage.time field in mongo
-`db.images.createIndex( { "IQimage.time": 1 } )`
+1. `git clone` the source
+1. Install pre-reqs
+1. Import sample data from .csv into mongodb
+1. Config app and nginx/lighttpd
+1. Copy static files to your webserver or CDN
 6. Run the backend
-`CCTVweb/backend/app.py`
 7. Open the frontend in a browser
-`CCTVweb/frontend/index.py`
 
 ### Python3
 1. Install Python3, virtualenv
 2. Create virtualenv and activate it
-  - virtualenv -p /usr/bin/python3 ./new-environment
-  - source ./new-environment/bin/activate
+    - virtualenv -p /usr/bin/python3 ./new-environment
+    - source ./new-environment/bin/activate
 3. Install the pip packages (the other dependencies will be automatically pulled)
-  - pip install flask flask-pymongo flask-restful flask-cors
+    - pip install flask flask-pymongo flask-restful flask-cors
 
 ### Camera FTP configuration
 1. Update your cameras to the latest firmware [IQinvision](http://www.iqeye.com).
-2. Under the Trigger tab, set up FTP to write images to filename "$ST.$FN", and directory "$SH/$SD(%Y)-$SD(%m)-$SD(%d)/$SD(%H)"
-  -  See docs/iqinvision.md
-
-This will create file paths like "camera/00_34_33:e3:b4:81/2016-01-01/23/23_01.trig+00.jpg. It is important that this schema matches what is defined in config/config.py. Make sure that you define this schema in such a way as to not write an excessive number of files to a single directory as this will negatively impact performance.
+2. Under the Trigger tab, set up FTP to write images, recommended to save each camera to its own directory and limit per-directory contents to less than 10,000 JPEGs
+    -  See docs/iqinvision.md
