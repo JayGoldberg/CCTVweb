@@ -15,10 +15,12 @@ Planned Features
 * Play events sequentially
 * Play events forwards/backwards
 * Scroll through events frame-by-frame
+* Support for live streaming and "popping" interesting cameras to foreground
 * Set alert thresholds
   * ie. if camera is recording over 25% more motion today than yesterday, send an email
 * Fast JPEG indexing
 * Fast backend engine for returning image data
+* Excellent support for small/cheap computers (CHiP, Raspberry Pi)
 * AngularJS frontend
 * Support for Google Cloud Storage
 * Nice graphs of camera activity
