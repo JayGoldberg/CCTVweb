@@ -8,54 +8,58 @@ Architecture
 ============
 CCTVweb currently depends on the JPEG comment (COM) fields written by IQinvision IQeye network cameras. Cameras are responsible for FTP'ing images, but no further intelligence is needed from them, the indexing, management, and playback is handled by CCTVweb.
 
+Implemented Features
+============
+ - Completely web-based viewer, no plugins required
+   * Play events forwards/backwards
+ - Scroll through events frame-by-frame
+ - Fast JPEG indexing
+ - AngularJS frontend
+ - Fast backend engine for returning image data
+ - Nice graphs of camera activity
+ - CORS support and static file serving
+
 Planned Features
 ============
-* Completely web-based viewer, no plugins required
-* Preview all events for a single day
-* Play events sequentially
-* Play events forwards/backwards
-* Scroll through events frame-by-frame
-* Support for live streaming and "popping" interesting cameras to foreground
-* Set alert thresholds
-  * ie. if camera is recording over 25% more motion today than yesterday, send an email
-* Fast JPEG indexing
-* Fast backend engine for returning image data
-* Excellent support for small/cheap computers (CHiP, Raspberry Pi)
-* AngularJS frontend
-* Support for Google Cloud Storage
-* Nice graphs of camera activity
-* Image recognition capability using Google Machine Vision
-* CORS support and static file serving
-* Support for relays (for door locks), HTTP triggers
+ - Preview all events for a single day
+ - Play events sequentially
+ - Support for live viewer and "popping" interesting cameras to foreground
+ - Set alert thresholds
+   - ie. if camera is recording over 25% more motion today than yesterday, send an email
+ - Excellent support for small/cheap computers (CHiP, Raspberry Pi)
+ - Support for Google Cloud Storage
+ - Image recognition capability using Google Machine Vision
+ - Support for relays (for door locks), HTTP triggers
+ - Camera settings query and management
 
 Requirements
 ============
-* Linux server
-* nginx/lighttpd
-* python3
-  * virtualenv
-  * flask
-  * Flask-RESTful
+ * Linux server
+ * nginx/lighttpd
+ * python2
+   * virtualenv
+   * flask
+   * Flask-RESTful
 * sqlite3
 * nodejs
 
 Installation
 ============
 1. `git clone` the source
-1. Install pre-reqs
-1. Import sample data from .csv into mongodb
+1. Install prereqs
+1. Import sample data from .csv into DB
 1. Config app and nginx/lighttpd
 1. Copy static files to your webserver or CDN
 6. Run the backend
 7. Open the frontend in a browser
 
-### Python3
-1. Install Python3, virtualenv
+### Python2
+1. Install Python2, virtualenv
 2. Create virtualenv and activate it
-    - virtualenv -p /usr/bin/python3 ./new-environment
-    - source ./new-environment/bin/activate
+    - `virtualenv -p /usr/bin/python2 ./new-environment`
+    - `source ./new-environment/bin/activate`
 3. Install the pip packages (the other dependencies will be automatically pulled)
-    - pip install flask flask-pymongo flask-restful flask-cors
+    - `pip install -r requirements.txt`
 
 ### Camera FTP configuration
 1. Update your cameras to the latest firmware [IQinvision](http://www.iqeye.com).
